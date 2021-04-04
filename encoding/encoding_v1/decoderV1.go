@@ -3,9 +3,10 @@ package encoding_v1
 import (
 	"bytes"
 	"encoding/binary"
+	"io"
+
 	"github.com/mindstand/go-bolt/encoding"
 	"github.com/mindstand/go-bolt/encoding/encode_consts"
-	"io"
 
 	"github.com/mindstand/go-bolt/errors"
 	"github.com/mindstand/go-bolt/structures/graph"
@@ -331,19 +332,24 @@ func (d DecoderV1) decodeNode(buffer *bytes.Buffer) (graph.Node, error) {
 	if err != nil {
 		return node, err
 	}
-	labelIntSlice, ok := labelInt.([]interface{})
-	if !ok {
-		return node, errors.New("Expected: Labels []string, but got %T %+v", labelInt, labelInt)
-	}
-	node.Labels, err = encoding.SliceInterfaceToString(labelIntSlice)
-	if err != nil {
-		return node, err
+	switch v := labelInt.(type) {
+	case []interface{}:
+		labelIntSlice := v
+		node.Labels, err = encoding.SliceInterfaceToString(labelIntSlice)
+		if err != nil {
+			return node, err
+		}
+	case string:
+		node.Labels = []string{v}
+	default:
+		return node, errors.New("Expected: Labels []string or string, but got %T %+v", labelInt, labelInt)
 	}
 
 	propertiesInt, err := d.decode(buffer)
 	if err != nil {
 		return node, err
 	}
+	var ok bool
 	node.Properties, ok = propertiesInt.(map[string]interface{})
 	if !ok {
 		return node, errors.New("Expected: Properties map[string]interface{}, but got %T %+v", propertiesInt, propertiesInt)
