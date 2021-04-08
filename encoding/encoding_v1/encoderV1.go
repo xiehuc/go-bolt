@@ -2,10 +2,11 @@ package encoding_v1
 
 import (
 	"encoding/binary"
-	"github.com/mindstand/go-bolt/encoding/encode_consts"
 	"io"
 	"math"
 	"reflect"
+
+	"github.com/mindstand/go-bolt/encoding/encode_consts"
 
 	"bytes"
 

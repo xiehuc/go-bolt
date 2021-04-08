@@ -16,22 +16,7 @@ var (
 	ClientID = "GoBolt/" + Version
 )
 
-type QueryParams map[string]interface{}
-
-func (q *QueryParams) GetMap() map[string]interface{} {
-	return *q
-}
-
-func (q *QueryParams) GetKeys() []string {
-	keys := make([]string, len(*q))
-	i := 0
-	for k := range *q {
-		keys[i] = k
-		i++
-	}
-
-	return keys
-}
+type QueryParams = map[string]interface{}
 
 type NeoRows [][]interface{}
 
