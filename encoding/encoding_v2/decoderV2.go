@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
+	"strconv"
+	"time"
+
 	"github.com/mindstand/go-bolt/encoding"
 	"github.com/mindstand/go-bolt/encoding/encode_consts"
 	"github.com/mindstand/go-bolt/errors"
@@ -11,8 +15,6 @@ import (
 	"github.com/mindstand/go-bolt/structures/messages"
 	"github.com/mindstand/go-bolt/structures/types"
 	"github.com/mindstand/gotime"
-	"io"
-	"time"
 )
 
 type DecoderV2 struct {
@@ -665,6 +667,17 @@ func (d DecoderV2) decodeNode(buffer *bytes.Buffer) (graph.Node, error) {
 
 }
 
+func (d DecoderV2) atos(v interface{}) string {
+	switch t := v.(type) {
+	case string:
+		return t
+	case int64:
+		return strconv.FormatInt(t, 64)
+	default:
+		return fmt.Sprint(v)
+	}
+}
+
 func (d DecoderV2) decodeRelationship(buffer *bytes.Buffer) (graph.Relationship, error) {
 	rel := graph.Relationship{}
 
@@ -672,7 +685,7 @@ func (d DecoderV2) decodeRelationship(buffer *bytes.Buffer) (graph.Relationship,
 	if err != nil {
 		return rel, err
 	}
-	rel.RelIdentity = relIdentityInt.(int64)
+	rel.RelIdentity = d.atos(relIdentityInt)
 
 	startNodeIdentityInt, err := d.decode(buffer)
 	if err != nil {

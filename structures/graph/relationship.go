@@ -7,7 +7,7 @@ const (
 
 // Relationship Represents a Relationship structure
 type Relationship struct {
-	RelIdentity       int64
+	RelIdentity       string
 	StartNodeIdentity int64
 	EndNodeIdentity   int64
 	Type              string

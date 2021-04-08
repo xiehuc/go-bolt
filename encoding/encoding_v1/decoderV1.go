@@ -3,7 +3,9 @@ package encoding_v1
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"io"
+	"strconv"
 
 	"github.com/mindstand/go-bolt/encoding"
 	"github.com/mindstand/go-bolt/encoding/encode_consts"
@@ -359,6 +361,17 @@ func (d DecoderV1) decodeNode(buffer *bytes.Buffer) (graph.Node, error) {
 
 }
 
+func (d DecoderV1) atos(v interface{}) string {
+	switch t := v.(type) {
+	case string:
+		return t
+	case int64:
+		return strconv.FormatInt(t, 64)
+	default:
+		return fmt.Sprint(v)
+	}
+}
+
 func (d DecoderV1) decodeRelationship(buffer *bytes.Buffer) (graph.Relationship, error) {
 	rel := graph.Relationship{}
 
@@ -366,7 +379,7 @@ func (d DecoderV1) decodeRelationship(buffer *bytes.Buffer) (graph.Relationship,
 	if err != nil {
 		return rel, err
 	}
-	rel.RelIdentity = relIdentityInt.(int64)
+	rel.RelIdentity = d.atos(relIdentityInt)
 
 	startNodeIdentityInt, err := d.decode(buffer)
 	if err != nil {
