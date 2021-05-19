@@ -7,7 +7,7 @@ const (
 
 // UnboundRelationship Represents a UnboundRelationship structure
 type UnboundRelationship struct {
-	RelIdentity int64
+	RelIdentity string
 	Type        string
 	Properties  map[string]interface{}
 }

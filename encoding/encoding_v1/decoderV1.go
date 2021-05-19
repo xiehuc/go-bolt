@@ -464,7 +464,7 @@ func (d DecoderV1) decodeUnboundRelationship(buffer *bytes.Buffer) (graph.Unboun
 	if err != nil {
 		return rel, err
 	}
-	rel.RelIdentity = relIdentityInt.(int64)
+	rel.RelIdentity = d.atos(relIdentityInt)
 
 	var ok bool
 	typeInt, err := d.decode(buffer)
